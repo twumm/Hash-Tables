@@ -15,6 +15,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.count = 0
 
 
     def _hash(self, key):
@@ -51,7 +52,13 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # hash the key with _hash_mod to get index
+        index = self._hash_mod(key)
+        # check if count is less than capacity
+        if self.count < self.capacity:
+            # insert value in index
+            self.storage[index] = value
+            self.count += 1
 
 
 
@@ -63,7 +70,11 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        try:
+            self.storage.pop(index)
+        except:
+            print('Key not found!')
 
 
     def retrieve(self, key):
@@ -74,6 +85,12 @@ class HashTable:
 
         Fill this in.
         '''
+        index = self._hash_mod(key)
+        try: 
+            return self.storage[index]
+        except:
+            return None
+        
         pass
 
 
@@ -87,6 +104,8 @@ class HashTable:
         pass
 
 
+hashed_table = HashTable(8)
+hashed_table._hash(-333193254)
 
 if __name__ == "__main__":
     ht = HashTable(2)
