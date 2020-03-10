@@ -55,10 +55,21 @@ class HashTable:
         # hash the key with _hash_mod to get index
         index = self._hash_mod(key)
         # check if count is less than capacity
+        # if self.count >= self.capacity:
+        #     self.resize()
+        # self.storage[index] = value
+        # self.count += 1
         if self.count >= self.capacity:
             self.resize()
-        self.storage[index] = value
-        self.count += 1
+        if self.storage[index]:
+            if self.storage[index].key is key:
+                self.storage[index].value = value
+            elif self.storage[index].key is not key and self.storage[index].next is None:
+                self.storage[index].next = (LinkedPair(key, value))
+                self.count += 1
+        else:
+            self.storage[index] = LinkedPair(key, value)
+            self.count += 1
 
 
 
@@ -71,11 +82,24 @@ class HashTable:
         Fill this in.
         '''
         index = self._hash_mod(key)
-        try:
-            self.storage.pop(index)
-            self.count -= 1
-        except:
-            print('Key not found!')
+        # FIRST PASS SOLUTION
+        # try:
+        #     self.storage.pop(index)
+        #     self.count -= 1
+        # except:
+        #     print('Key not found!')
+        # if self.storage[index]:
+
+        if not self.storage[index]:
+            return 'Key not found'
+        else:
+            if self.storage[index].key is key and self.storage[index].next is None:
+                self.storage[index] = None
+                self.count -= 1
+            else:
+                self.storage[index].next = None
+                self.count -= 1
+
 
 
     def retrieve(self, key):
@@ -87,12 +111,19 @@ class HashTable:
         Fill this in.
         '''
         index = self._hash_mod(key)
-        try: 
-            return self.storage[index]
-        except:
+        # FIRST PASS
+        # try: 
+        #     return self.storage[index]
+        # except:
+        #     return None
+
+        if not self.storage[index]:
             return None
-        
-        pass
+        else:
+            if self.storage[index].key is key:
+                return self.storage[index]
+            else:
+                return self.storage[index].next
 
 
     def resize(self):
@@ -109,33 +140,37 @@ class HashTable:
         self.storage = new_storage
 
 
-hashed_table = HashTable(8)
-hashed_table._hash(-333193254)
+hashed_table = HashTable(2)
+hashed_table.insert('key_1', 'val_1')
+hashed_table.insert('key_2', 'val_2')
+hashed_table.insert('key_3', 'val_3')
+hashed_table.insert('key_3', 'val_4')
+print(hashed_table.retrieve('key_3'))
 
-if __name__ == "__main__":
-    ht = HashTable(2)
+# if __name__ == "__main__":
+#     ht = HashTable(2)
 
-    ht.insert("line_1", "Tiny hash table")
-    ht.insert("line_2", "Filled beyond capacity")
-    ht.insert("line_3", "Linked list saves the day!")
+#     ht.insert("line_1", "Tiny hash table")
+#     ht.insert("line_2", "Filled beyond capacity")
+#     ht.insert("line_3", "Linked list saves the day!")
 
-    print("")
+#     print("")
 
-    # Test storing beyond capacity
-    print(ht.retrieve("line_1"))
-    print(ht.retrieve("line_2"))
-    print(ht.retrieve("line_3"))
+#     # Test storing beyond capacity
+#     print(ht.retrieve("line_1"))
+#     print(ht.retrieve("line_2"))
+#     print(ht.retrieve("line_3"))
 
-    # Test resizing
-    old_capacity = len(ht.storage)
-    ht.resize()
-    new_capacity = len(ht.storage)
+#     # Test resizing
+#     old_capacity = len(ht.storage)
+#     ht.resize()
+#     new_capacity = len(ht.storage)
 
-    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+#     print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-    # Test if data intact after resizing
-    print(ht.retrieve("line_1"))
-    print(ht.retrieve("line_2"))
-    print(ht.retrieve("line_3"))
+#     # Test if data intact after resizing
+#     print(ht.retrieve("line_1"))
+#     print(ht.retrieve("line_2"))
+#     print(ht.retrieve("line_3"))
 
-    print("")
+#     print("")
