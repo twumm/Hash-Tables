@@ -55,10 +55,10 @@ class HashTable:
         # hash the key with _hash_mod to get index
         index = self._hash_mod(key)
         # check if count is less than capacity
-        if self.count < self.capacity:
-            # insert value in index
-            self.storage[index] = value
-            self.count += 1
+        if self.count >= self.capacity:
+            self.resize()
+        self.storage[index] = value
+        self.count += 1
 
 
 
@@ -73,6 +73,7 @@ class HashTable:
         index = self._hash_mod(key)
         try:
             self.storage.pop(index)
+            self.count -= 1
         except:
             print('Key not found!')
 
@@ -101,7 +102,11 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
+        for i in range(self.count):
+            new_storage[i] = self.storage[i]
+        self.storage = new_storage
 
 
 hashed_table = HashTable(8)
