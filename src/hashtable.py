@@ -11,10 +11,11 @@ class HashTable:
     '''
     A hash table that with `capacity` buckets
     that accepts string keys
-    '''
+    ''' 
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.count = 0
 
 
     def _hash(self, key):
@@ -51,7 +52,25 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # hash the key with _hash_mod to get index
+        index = self._hash_mod(key)
+        # check if count is less than capacity
+        # if self.count >= self.capacity:
+        #     self.resize()
+        # self.storage[index] = value
+        # self.count += 1
+        if self.count >= self.capacity:
+            self.resize()
+        if self.storage[index]:
+            while self.storage[index].next is not None:
+                if self.storage[index].key is key:
+                    self.storage[index].value = value
+                    return
+            self.storage[index].next = LinkedPair(key, value)
+            self.count += 1
+        else:
+            self.storage[index] = LinkedPair(key, value)
+            self.count += 1
 
 
 
@@ -63,7 +82,28 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        # FIRST PASS SOLUTION
+        # try:
+        #     self.storage.pop(index)
+        #     self.count -= 1
+        # except:
+        #     print('Key not found!')
+        # if self.storage[index]:
+        if not self.storage[index]:
+            return 'Key not found'
+        else:
+            current_node = self.storage[index]
+            if current_node.next is None:
+                self.storage[index] = None
+                self.count -= 1
+            else:
+                while current_node.key is not key:
+                    previous_node = current_node
+                    current_node = current_node.next
+                previous_node.next = current_node.next
+                self.count -= 1
+
 
 
     def retrieve(self, key):
@@ -74,7 +114,17 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        current_node = self.storage[index]
+        # FIRST PASS
+        # try: 
+        #     return self.storage[index]
+        # except:
+        #     return None
+        while current_node:
+            if current_node.key == key:
+                return current_node.value
+            current_node = current_node.next
 
 
     def resize(self):
@@ -84,9 +134,20 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
+        for i in range(self.count):
+            new_storage[i] = self.storage[i]
+        self.storage = new_storage
 
 
+hashed_table = HashTable(2)
+hashed_table.insert('key_1', 'val_1')
+hashed_table.insert('key_2', 'val_2')
+hashed_table.insert('key_3', 'val_3')
+hashed_table.insert('key_3', 'val_4')
+print(hashed_table.retrieve('key_3'))
+print(hashed_table.retrieve('key_2'))
 
 if __name__ == "__main__":
     ht = HashTable(2)
